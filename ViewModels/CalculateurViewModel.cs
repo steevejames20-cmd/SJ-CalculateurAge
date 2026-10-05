@@ -26,7 +26,11 @@ public class CalculateurViewModel : BaseViewModel
     public DateTime DateNaissance
     {
         get => _dateNaissance;
-        set => SetField(ref _dateNaissance, value);
+        set
+        {
+            if (SetField(ref _dateNaissance, value))
+                CalculerCommand.Rafraichir();
+        }
     }
 
     public string Resultat
@@ -65,7 +69,8 @@ public class CalculateurViewModel : BaseViewModel
     {
         CalculerCommand = new RelayCommand(
             Calculer,
-            () => !string.IsNullOrWhiteSpace(Nom));
+            () => !string.IsNullOrWhiteSpace(Nom)
+                  && DateNaissance.Date <= DateTime.Today);
         EffacerCommand = new RelayCommand(Effacer);
         Historique.CollectionChanged +=
             (s, e) => OnPropertyChanged(nameof(HistoriqueVisible));
