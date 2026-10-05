@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+
 namespace CalculateurAge.ViewModels;
 
 public class CalculateurViewModel : BaseViewModel
@@ -51,6 +53,10 @@ public class CalculateurViewModel : BaseViewModel
         set => SetField(ref _resultatVisible, value);
     }
 
+    public ObservableCollection<string> Historique { get; } = new();
+
+    public bool HistoriqueVisible => Historique.Count > 0;
+
     // Lie a Button.Command dans le XAML.
     public RelayCommand CalculerCommand { get; }
     public RelayCommand EffacerCommand { get; }
@@ -61,6 +67,8 @@ public class CalculateurViewModel : BaseViewModel
             Calculer,
             () => !string.IsNullOrWhiteSpace(Nom));
         EffacerCommand = new RelayCommand(Effacer);
+        Historique.CollectionChanged +=
+            (s, e) => OnPropertyChanged(nameof(HistoriqueVisible));
     }
 
     // La logique metier : aucun controle d'interface ici.
@@ -71,6 +79,7 @@ public class CalculateurViewModel : BaseViewModel
 
         Resultat = $"{Nom}, vous avez {age} ans";
         Message = age >= 18 ? "Majeur" : "Mineur";
+        Historique.Insert(0, $"{Nom} : {age} ans (ne le {DateNaissance:dd/MM/yyyy})");
         Anniversaire = TexteAnniversaire(DateNaissance);
         ResultatVisible = true;
     }
