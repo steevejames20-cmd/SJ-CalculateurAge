@@ -17,6 +17,7 @@
              IsVisible="{Binding ResultatVisible}"/>
       <Label Text="{Binding Message}" FontSize="16" IsVisible="{Binding ResultatVisible}"/>
       <Label Text="{Binding Anniversaire}" FontSize="16" IsVisible="{Binding ResultatVisible}"/>
+      <Button Text="Voir le detail" Command="{Binding VoirDetailCommand}" IsVisible="{Binding ResultatVisible}"/>
       <Label Text="Historique" FontSize="18" FontAttributes="Bold"
              IsVisible="{Binding HistoriqueVisible}"/>
       <VerticalStackLayout Spacing="4"

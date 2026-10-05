@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using CalculateurAge.Views;
 
 namespace CalculateurAge.ViewModels;
 
@@ -64,6 +65,8 @@ public class CalculateurViewModel : BaseViewModel
     // Lie a Button.Command dans le XAML.
     public RelayCommand CalculerCommand { get; }
     public RelayCommand EffacerCommand { get; }
+    public RelayCommand VoirDetailCommand { get; }
+    public RelayCommand RetourCommand { get; }
 
     public CalculateurViewModel()
     {
@@ -72,6 +75,8 @@ public class CalculateurViewModel : BaseViewModel
             () => !string.IsNullOrWhiteSpace(Nom)
                   && DateNaissance.Date <= DateTime.Today);
         EffacerCommand = new RelayCommand(Effacer);
+        VoirDetailCommand = new RelayCommand(VoirDetail);
+        RetourCommand = new RelayCommand(Retour);
         Historique.CollectionChanged +=
             (s, e) => OnPropertyChanged(nameof(HistoriqueVisible));
     }
@@ -109,6 +114,13 @@ public class CalculateurViewModel : BaseViewModel
                    && !DateTime.IsLeapYear(annee) ? 28 : naissance.Day;
         return new DateTime(annee, naissance.Month, jour);
     }
+
+    // Aucun parametre dans l'URL : la page lit le meme ViewModel.
+    private async void VoirDetail()
+        => await Shell.Current.GoToAsync(nameof(ResultatPage));
+
+    private async void Retour()
+        => await Shell.Current.GoToAsync("..");
 
     // Remet tous les champs a zero.
     private void Effacer()
