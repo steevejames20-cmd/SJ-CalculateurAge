@@ -7,6 +7,7 @@ public class CalculateurViewModel : BaseViewModel
     private DateTime _dateNaissance = DateTime.Today.AddYears(-20);
     private string _resultat = "";
     private string _message = "";
+    private string _anniversaire = "";
     private bool _resultatVisible;
 
     // Proprietes publiques : ce que le XAML voit.
@@ -38,6 +39,12 @@ public class CalculateurViewModel : BaseViewModel
         set => SetField(ref _message, value);
     }
 
+    public string Anniversaire
+    {
+        get => _anniversaire;
+        set => SetField(ref _anniversaire, value);
+    }
+
     public bool ResultatVisible
     {
         get => _resultatVisible;
@@ -64,7 +71,29 @@ public class CalculateurViewModel : BaseViewModel
 
         Resultat = $"{Nom}, vous avez {age} ans";
         Message = age >= 18 ? "Majeur" : "Mineur";
+        Anniversaire = TexteAnniversaire(DateNaissance);
         ResultatVisible = true;
+    }
+
+    private static string TexteAnniversaire(DateTime naissance)
+    {
+        DateTime aujourdhui = DateTime.Today;
+        DateTime prochain = AnniversaireEn(naissance, aujourdhui.Year);
+        if (prochain < aujourdhui)
+            prochain = AnniversaireEn(naissance, aujourdhui.Year + 1);
+
+        int jours = (prochain - aujourdhui).Days;
+        if (jours == 0) return "Joyeux anniversaire !";
+        if (jours == 1) return "Prochain anniversaire demain";
+        return $"Prochain anniversaire dans {jours} jours";
+    }
+
+    // Le 29 fevrier devient le 28 les annees non bissextiles.
+    private static DateTime AnniversaireEn(DateTime naissance, int annee)
+    {
+        int jour = naissance.Month == 2 && naissance.Day == 29
+                   && !DateTime.IsLeapYear(annee) ? 28 : naissance.Day;
+        return new DateTime(annee, naissance.Month, jour);
     }
 
     // Remet tous les champs a zero.
@@ -74,6 +103,7 @@ public class CalculateurViewModel : BaseViewModel
         DateNaissance = DateTime.Today.AddYears(-20);
         Resultat = "";
         Message = "";
+        Anniversaire = "";
         ResultatVisible = false;
     }
 }
